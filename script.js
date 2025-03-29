@@ -20,6 +20,7 @@ async function setCurrentWord(word) {
 async function gameLogic(word, boxes) {
 	let inputs;
 	do {
+		boxes.forEach((box) => { box.textContent = '' }) //Clear box content when trying again
 		inputs = [];
 		await (async () => {
 			for (const box of boxes) {
