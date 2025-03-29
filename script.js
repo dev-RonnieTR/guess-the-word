@@ -3,24 +3,21 @@ startGame();
 async function startGame() {
 	const wordArray = await getAllWords(); //Contains array filled with word objects.
 	await (async () => {
-		for (const wordObj of wordArray) {
-			await setCurrentWord(wordObj);
+		for (const word of wordArray) {
+			await setCurrentWord(word);
 		}
 	})();
 }
 
-async function setCurrentWord({ word, length }) {
+async function setCurrentWord(word) {
 	const output = document.getElementById("output");
-	const inputBoxes = document.getElementById("input-boxes");
-
 	output.textContent = scrambleWord(word); //Displays scrambled word
+	const boxes = createInputBoxes(word.length);
 
-	inputBoxes.innerHTML = ''; //Clears HTML before next boxes
-	for (let i = 1; i <= length; i++) {
-		inputBoxes.innerHTML += `<div class="input-box"></div>`;
-	}
-	const boxes = [...document.getElementsByClassName("input-box")];
-	
+	await gameLogic(word, boxes);
+}
+
+async function gameLogic(word, boxes) {
 	let inputs;
 	do {
 		inputs = [];
@@ -33,7 +30,16 @@ async function setCurrentWord({ word, length }) {
 				box.classList.remove("input-box--active");
 			}
 		})();
-	} while(inputs.join('') !== word);
+	} while (inputs.join("") !== word);
+}
+
+function createInputBoxes(length) {
+	const inputBoxes = document.getElementById("input-boxes");
+	inputBoxes.innerHTML = ""; //Clears HTML before next boxes
+	for (let i = 1; i <= length; i++) {
+		inputBoxes.innerHTML += `<div class="input-box"></div>`; //Displays input boxes
+	}
+	return [...document.getElementsByClassName("input-box")];
 }
 
 async function detectUserInput() {
@@ -78,10 +84,5 @@ async function getAllWords() {
 	const wordPromises = Array.from({ length: 20 }, () => fetchWord()); //Creates array of 20 elements, where each elements fetches a word
 	const wordsFetched = await Promise.all(wordPromises); //Waits for all words to be fetched before continuing
 
-	const words = wordsFetched.map((wordFetched) => ({
-		word: wordFetched,
-		length: wordFetched.length,
-	}));
-
-	return words;
+	return wordsFetched;
 }
