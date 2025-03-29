@@ -2,6 +2,55 @@ startGame();
 
 async function startGame() {
 	const wordArray = await getAllWords(); //Contains array filled with word objects.
+	await (async () => {
+		for (const wordObj of wordArray) {
+			await setCurrentWord(wordObj);
+		}
+	})();
+}
+
+async function setCurrentWord({ word, length }) {
+	const output = document.getElementById("output");
+	const inputBoxes = document.getElementById("input-boxes");
+
+	output.textContent = scrambleWord(word); //Displays scrambled word
+
+	for (let i = 1; i <= length; i++) {
+		inputBoxes.innerHTML += `<div class="input-box"></div>`;
+	}
+	const boxes = [...document.getElementsByClassName("input-box")];
+	document.body.style.background = "red";
+	await (async () => {
+		for (const box of boxes) {
+			box.classList.add("input-box--active");
+			const userInput = await detectUserInput();
+			box.textContent = userInput;
+			box.classList.remove("input-box--active");
+		}
+	})();
+}
+
+async function detectUserInput() {
+	return new Promise((resolve) => {
+		document.onkeydown = (event) => {
+			if (/^[a-zA-Z]$/.test(event.key)) {
+				document.onkeydown = null; // Remove the event listener after the first valid key press
+				resolve(event.key.toLowerCase()); // Resolve the promise with the key
+			}
+		};
+	});
+}
+
+function scrambleWord(word) {
+	const array = word.split("");
+
+	//Fisher-Yates Shuffle Method
+	for (let i = array.length - 1; i > 0; i--) {
+		let j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+	const scrambledWord = array.join("");
+	return scrambledWord;
 }
 
 async function fetchWord() {
