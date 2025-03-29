@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guess the word">
+    <title>Guess the word</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" as="style"
+        onload="this.rel='stylesheet';this.onload=null">
+</head>
+<body>
+    <main>
+        <img src="resources/word-scramblle-logo.svg" alt="Word Scramblle">
+        <div id="output"><!--Inserted in JavaScript--></div>
+        <div class="game-info">
+            <div class="tries">
+                <p>Tries (<span id="current-try">1</span>/5):</p>
+                <div class="circles">
+                    <div class="circle circle--active"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+            </div>
+            <div class="mistakes">
+                <p>Mistakes: <span id="mistakes"></span></p>
+            </div>
+        </div>
+        <div id="input-boxes">
+            <!--Inserted in JavaScript-->
+        </div>
+        <div class="buttons">
+            <button id="random-button" type="button">Random</button>
+            <button id="reset-button" type="button">Reset</button>
+        </div>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
