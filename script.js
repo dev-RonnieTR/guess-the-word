@@ -15,11 +15,11 @@ async function setCurrentWord({ word, length }) {
 
 	output.textContent = scrambleWord(word); //Displays scrambled word
 
+	inputBoxes.innerHTML = ''; //Clears HTML before next boxes
 	for (let i = 1; i <= length; i++) {
 		inputBoxes.innerHTML += `<div class="input-box"></div>`;
 	}
 	const boxes = [...document.getElementsByClassName("input-box")];
-	document.body.style.background = "red";
 	await (async () => {
 		for (const box of boxes) {
 			box.classList.add("input-box--active");
