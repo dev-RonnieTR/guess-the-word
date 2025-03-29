@@ -20,14 +20,20 @@ async function setCurrentWord({ word, length }) {
 		inputBoxes.innerHTML += `<div class="input-box"></div>`;
 	}
 	const boxes = [...document.getElementsByClassName("input-box")];
-	await (async () => {
-		for (const box of boxes) {
-			box.classList.add("input-box--active");
-			const userInput = await detectUserInput();
-			box.textContent = userInput;
-			box.classList.remove("input-box--active");
-		}
-	})();
+	
+	let inputs;
+	do {
+		inputs = [];
+		await (async () => {
+			for (const box of boxes) {
+				box.classList.add("input-box--active");
+				const userInput = await detectUserInput();
+				box.textContent = userInput;
+				inputs.push(userInput);
+				box.classList.remove("input-box--active");
+			}
+		})();
+	} while(inputs.join('') !== word);
 }
 
 async function detectUserInput() {
