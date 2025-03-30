@@ -1,33 +1,35 @@
 const output = document.getElementById("output");
-const randomButton = document.getElementById('randomButton');
+const randomButton = document.getElementById("randomButton");
 const resetButton = document.getElementById("reset-button");
 
 let tries;
+let resetGame = false; //Becomes true if user clicks resetButton
 startGame();
 
-resetButton.onclick = () => {
-	output.textContent = '';
-	createInputBoxes(0);
-	startGame();
-};
-
 async function startGame() {
+	resetGame = false;
 	tries = 1;
 	await (async () => {
-		for (let i = 1; i <= 3; i++) {
+		for (let i = 1; i <= 10; i++) {
 			await setCurrentWord();
-			if (tries > 5) {
-				break;
+			if (tries > 5 || resetGame) {
+				break; 
+			//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
 			}
 		}
 	})();
+
+	if (resetGame) {
+		setTimeout(startGame, 1000); //Allows current startGame() iteration to finish before running startGame() again
+		return;
+	}
 
 	if (tries > 5) {
 		alert("You lose");
 	} else {
 		alert("You win!");
 	}
-	startGame();
+	setTimeout(startGame, 1000); //Allows startGame() to fully finish before starting again, avoiding recursion
 	return;
 }
 
@@ -62,15 +64,21 @@ async function gameLogic(word, boxes) {
 						boxes[i].textContent = ""; //Deletes input of the previous iteration
 						i--; //Decrease once more so now the next iteration of loop will go one index backwards
 					}
+				} else if (userInput === "reset") {
+					resetGame = true;
+					return;
+					//Shortcircuits the parent function and the while loop
 				} else {
 					boxes[i].textContent = userInput;
 					inputs.push(userInput);
 				}
 			}
 		})();
-		retry = inputs.join("") !== word;
-		tries = retry ? tries + 1 : tries;
-	} while (inputs.join("") !== word && tries <= 5);
+		if (!resetGame) {
+			retry = inputs.join("") !== word;
+			tries = retry ? tries + 1 : tries;
+		}
+	} while (inputs.join("") !== word && tries <= 5 && !resetGame);
 
 	return;
 }
@@ -94,6 +102,9 @@ async function detectUserInput() {
 				document.onkeydown = null;
 				resolve(event.key);
 			}
+		};
+		resetButton.onclick = () => {
+			resolve("reset");
 		};
 	});
 }
