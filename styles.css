@@ -14,7 +14,7 @@
 	--color-5: #97a3b6;
 	--color-6: #030616;
 	--color-7: #f2f5f9;
-    --color-8: #041a2c;
+	--color-8: #041a2c;
 
 	--font-size-large: 2rem;
 	--font-size-medium: 1.25rem;
@@ -51,10 +51,10 @@ main {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-    gap: 2rem;
+	gap: 2rem;
 
 	background-color: var(--color-8);
-    border-radius: 1rem;
+	border-radius: 1rem;
 }
 #output {
 	width: 100%;
@@ -89,18 +89,20 @@ main {
 	height: var(--circle-radius);
 	background-color: white;
 	border-radius: 50%;
-    background-color: var(--color-4);
+	background-color: var(--color-4);
 }
 .circle--active {
-    background-color: var(--color-1);
+	background-color: var(--color-1);
 }
 .mistakes {
 	width: 30%;
 }
 #input-boxes {
 	margin-top: 2rem;
-    display: flex;
+	display: flex;
+	justify-content: center;
 	gap: 1rem;
+	flex-wrap: wrap;
 }
 .input-box {
 	width: calc(var(--font-size-medium) + 1.5rem);
@@ -112,14 +114,14 @@ main {
 
 	border: 2px solid var(--color-4);
 	border-radius: 0.5rem;
-    background-color: var(--color-8);
+	background-color: var(--color-8);
 }
 .input-box--active {
 	border: 2px solid var(--color-3);
 }
 .input-box--active::after {
 	content: "_";
-    animation: blink 1s infinite
+	animation: blink 1s infinite;
 }
 @keyframes blink {
 	0% {
@@ -134,38 +136,39 @@ main {
 }
 
 .buttons {
-    width: 100%;
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10%;
+	width: 100%;
+	margin-top: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10%;
 }
 .button {
-    width: 6rem;
-    height: 2rem;
+	width: 6rem;
+	height: 2rem;
 
-    background-color: var(--color-2);
-    filter: drop-shadow(0px 4px 0px #7b248a);
-    border: none;
-    border-radius: 0.5rem;
+	background-color: var(--color-2);
+	filter: drop-shadow(0px 4px 0px #7b248a);
+	border: none;
+	border-radius: 0.5rem;
 }
 .button:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 .button:active {
-    background-color: #7b248a;
-    filter: drop-shadow(0px 4px 0px var(--color-6));
+	background-color: #7b248a;
+	filter: drop-shadow(0px 4px 0px var(--color-6));
 }
 .button--disabled {
 	width: 6rem;
-    height: 2rem;
+	height: 2rem;
 	background-color: gray;
-    border: none;
-    border-radius: 0.5rem;
+	border: none;
+	border-radius: 0.5rem;
 }
 /* TYPOGRAPHY */
-html, button {
+html,
+button {
 	font-family: "Outfit", sans-serif;
 	font-optical-sizing: auto;
 	color: var(--color-7);
@@ -178,8 +181,27 @@ html, button {
 	font-size: var(--font-size-medium);
 }
 button {
-    font-size: var(--font-size-button);
+	font-size: var(--font-size-button);
 }
-.tries, .mistakes {
-    font-size: var(--font-size-small);
+.tries,
+.mistakes {
+	font-size: var(--font-size-small);
+}
+
+@media (max-width: 480px) {
+	html {
+		font-size: clamp(12px, 3.3333vw, 16px);
+	}
+}
+
+@media (min-width: 720px) {
+	html {
+		font-size: clamp(16px, 2.2222vw, 20px);
+	}
+}
+
+@media (min-width: 1280px) {
+	html {
+		font-size: clamp(20px, 1.5625vw, 24px);
+	}
 }
