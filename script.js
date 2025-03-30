@@ -5,10 +5,13 @@ const resetButton = document.getElementById("reset-button");
 let tries;
 let resetGame = false; //Becomes true if user clicks resetButton
 let resetWord = false; //Becomes true if user clicks randomButton
+let randomsLeft = 3;
+
 startGame();
 
 async function startGame() {
 	resetGame = false;
+
 	tries = 1;
 	await (async () => {
 		for (let i = 1; i <= 10; i++) {
@@ -18,6 +21,12 @@ async function startGame() {
 				//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
 			}
 			while (resetWord) {
+				randomsLeft--;
+				document.getElementById('randoms-left').textContent = randomsLeft;
+				if (randomsLeft === 0) {
+					randomButton.classList.remove('button')
+					randomButton.classList.add('button--disabled')
+				}
 				await setCurrentWord();
 			}
 		}
@@ -118,9 +127,11 @@ async function detectUserInput() {
 		resetButton.onclick = () => {
 			resolve("reset");
 		};
-		randomButton.onclick = () => {
-			resolve("randomize");
-		};
+		if (randomsLeft > 0) {
+			randomButton.onclick = () => {
+				resolve("randomize");
+			};
+		}
 	});
 }
 

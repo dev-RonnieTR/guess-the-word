@@ -138,7 +138,7 @@ main {
     align-items: center;
     gap: 10%;
 }
-button {
+.button {
     width: 6rem;
     height: 2rem;
 
@@ -147,12 +147,19 @@ button {
     border: none;
     border-radius: 0.5rem;
 }
-button:hover {
+.button:hover {
     cursor: pointer;
 }
-button:active {
+.button:active {
     background-color: #7b248a;
     filter: drop-shadow(0px 4px 0px var(--color-6));
+}
+.button--disabled {
+	width: 6rem;
+    height: 2rem;
+	background-color: gray;
+    border: none;
+    border-radius: 0.5rem;
 }
 /* TYPOGRAPHY */
 html, button {
