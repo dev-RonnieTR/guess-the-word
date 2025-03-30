@@ -3,6 +3,7 @@ const randomButton = document.getElementById("random-button");
 const resetButton = document.getElementById("reset-button");
 const randomsLeftSpan = document.getElementById("randoms-left");
 const currentTry = document.getElementById("current-try");
+const circles = [...document.getElementsByClassName("circle")];
 
 let tries;
 let resetGame; //Becomes true if user clicks resetButton
@@ -49,6 +50,7 @@ function resetFlagsAndMarkers() {
 	randomsLeftSpan.textContent = randomsLeft;
 	randomButton.classList.add("button");
 	randomButton.classList.remove("button--disabled");
+	circles.forEach((circle) => circle.classList.remove("circle--active"));
 }
 
 function endGame() {
@@ -81,6 +83,7 @@ async function gameLogic(word, boxes) {
 	let inputs = [];
 	shortcircuit = false;
 	do {
+		circles[tries - 1].classList.add("circle--active");
 		mistakes.textContent += `${inputs.join("")}\n`;
 		boxes.forEach((box) => (box.textContent = "")); //Clear box content when trying again
 		inputs = []; //Clears inputs when trying again
