@@ -65,6 +65,7 @@ async function gameLogic(word, boxes) {
 				const userInput = await detectUserInput();
 				boxes[i].classList.remove("input-box--active");
 				if (userInput === "Backspace") {
+					inputs.pop()
 					i--; //Decreases one so next iteration of loop is the same index as the current
 					if (i >= 0) {
 						boxes[i].textContent = ""; //Deletes input of the previous iteration
