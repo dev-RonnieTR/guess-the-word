@@ -72,7 +72,7 @@ main {
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: start;
 }
 .tries {
 	display: flex;
@@ -93,6 +93,9 @@ main {
 }
 .circle--active {
     background-color: var(--color-1);
+}
+.mistakes {
+	width: 30%;
 }
 #input-boxes {
 	margin-top: 2rem;

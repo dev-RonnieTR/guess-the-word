@@ -76,9 +76,12 @@ async function startCurrentRound() {
 }
 
 async function gameLogic(word, boxes) {
+	const mistakes = document.getElementById("mistakes");
+	mistakes.textContent = "";
 	let inputs = [];
 	shortcircuit = false;
 	do {
+		mistakes.textContent += `${inputs.join("")}\n`;
 		boxes.forEach((box) => (box.textContent = "")); //Clear box content when trying again
 		inputs = []; //Clears inputs when trying again
 		currentTry.textContent = tries;
