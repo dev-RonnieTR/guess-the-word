@@ -1,12 +1,25 @@
+let tries;
 startGame();
 
 async function startGame() {
+	tries = 1;
 	const wordArray = await getAllWords(); //Contains array filled with word objects.
 	await (async () => {
 		for (const word of wordArray) {
 			await setCurrentWord(word);
+			if (tries > 5) {
+				break;
+			}
 		}
 	})();
+
+	if (tries > 5) {
+		alert("You lose");
+	} else {
+		alert("You win!");
+	}
+	startGame();
+	return;
 }
 
 async function setCurrentWord(word) {
@@ -15,11 +28,11 @@ async function setCurrentWord(word) {
 	const boxes = createInputBoxes(word.length);
 
 	await gameLogic(word, boxes);
+	return;
 }
 
 async function gameLogic(word, boxes) {
 	let inputs = [];
-	let tries = 1;
 	currentTry = document.getElementById("current-try");
 
 	do {
@@ -40,6 +53,8 @@ async function gameLogic(word, boxes) {
 		retry = inputs.join("") !== word;
 		tries = retry ? tries + 1 : tries;
 	} while (inputs.join("") !== word && tries <= 5);
+
+	return;
 }
 
 function createInputBoxes(length) {
@@ -90,7 +105,7 @@ async function fetchWord() {
 }
 
 async function getAllWords() {
-	const wordPromises = Array.from({ length: 20 }, () => fetchWord()); //Creates array of 20 elements, where each elements fetches a word
+	const wordPromises = Array.from({ length: 10 }, () => fetchWord()); //Creates array of 10 elements, where each elements fetches a word
 	const wordsFetched = await Promise.all(wordPromises); //Waits for all words to be fetched before continuing
 
 	return wordsFetched;
