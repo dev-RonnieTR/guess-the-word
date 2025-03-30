@@ -1,10 +1,9 @@
 const output = document.getElementById("output");
+const randomButton = document.getElementById('randomButton');
 const resetButton = document.getElementById("reset-button");
 
 let tries;
 startGame();
-
-
 
 resetButton.onclick = () => {
 	output.textContent = '';
@@ -14,10 +13,9 @@ resetButton.onclick = () => {
 
 async function startGame() {
 	tries = 1;
-	const wordArray = await getAllWords(); //Contains array filled with word objects.
 	await (async () => {
-		for (const word of wordArray) {
-			await setCurrentWord(word);
+		for (let i = 1; i <= 3; i++) {
+			await setCurrentWord();
 			if (tries > 5) {
 				break;
 			}
@@ -33,7 +31,8 @@ async function startGame() {
 	return;
 }
 
-async function setCurrentWord(word) {
+async function setCurrentWord() {
+	word = await fetchWord();
 	output.textContent = scrambleWord(word); //Displays scrambled word
 	const boxes = createInputBoxes(word.length);
 
@@ -124,11 +123,4 @@ async function fetchWord() {
 		console.error("Error fetching word:", error);
 		return;
 	}
-}
-
-async function getAllWords() {
-	const wordPromises = Array.from({ length: 10 }, () => fetchWord()); //Creates array of 10 elements, where each elements fetches a word
-	const wordsFetched = await Promise.all(wordPromises); //Waits for all words to be fetched before continuing
-
-	return wordsFetched;
 }
