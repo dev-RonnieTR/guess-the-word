@@ -18,10 +18,16 @@ async function setCurrentWord(word) {
 }
 
 async function gameLogic(word, boxes) {
-	let inputs;
+	let inputs = [];
+	let tries = 1;
+	currentTry = document.getElementById("current-try");
+
 	do {
-		boxes.forEach((box) => { box.textContent = '' }) //Clear box content when trying again
-		inputs = [];
+		boxes.forEach((box) => {
+			box.textContent = "";
+		}); //Clear box content when trying again
+		inputs = []; //Clears inputs when trying again
+		currentTry.textContent = tries;
 		await (async () => {
 			for (const box of boxes) {
 				box.classList.add("input-box--active");
@@ -31,7 +37,9 @@ async function gameLogic(word, boxes) {
 				box.classList.remove("input-box--active");
 			}
 		})();
-	} while (inputs.join("") !== word);
+		retry = inputs.join("") !== word;
+		tries = retry ? tries + 1 : tries;
+	} while (inputs.join("") !== word && tries <= 5);
 }
 
 function createInputBoxes(length) {
