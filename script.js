@@ -7,42 +7,48 @@ const currentTry = document.getElementById("current-try");
 let tries;
 let resetGame; //Becomes true if user clicks resetButton
 let resetWord; //Becomes true if user clicks randomButton
+let shortcircuit;
 let randomsLeft = 3;
 
 startGame();
 
 async function startGame() {
+	resetFlagsAndMarkers();
+	await startRounds();
+	endGame();
+}
+
+async function startRounds() {
+	for (let i = 1; i <= 10; i++) {
+		//Round 1 to 10
+		do {
+			await startCurrentRound();
+			if (tries > 5 || resetGame) {
+				return;
+				//If all tries were used, or if resetGame was clicked, startRounds() exits
+			}
+			if (resetWord) {
+				randomsLeft--; //Player loses one randomizer
+				randomsLeftSpan.textContent = randomsLeft;
+				if (randomsLeft === 0) {
+					//If player random count reaches 0, randomButton is disabled
+					randomButton.classList.remove("button");
+					randomButton.classList.add("button--disabled");
+				}
+			}
+		} while (resetWord); //If randomButton was clicked, the do-while loop starts over
+	}
+}
+
+function resetFlagsAndMarkers() {
 	resetGame = false;
 	resetWord = false;
 	tries = 1;
+	currentTry.textContent = tries;
 	randomsLeft = 3;
 	randomsLeftSpan.textContent = randomsLeft;
 	randomButton.classList.add("button");
 	randomButton.classList.remove("button--disabled");
-	currentTry.textContent = tries;
-	await (async () => {
-		for (let i = 1; i <= 10; i++) {
-			do {
-				await setCurrentWord();
-				if (tries > 5 || resetGame) {
-					break;
-					//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
-				}
-				if (resetWord) {
-					randomsLeft--;
-					randomsLeftSpan.textContent = randomsLeft;
-					if (randomsLeft === 0) {
-						randomButton.classList.remove("button");
-						randomButton.classList.add("button--disabled");
-					}
-				}
-			} while (resetWord);
-			if (resetGame) {
-				break;
-			}
-		}
-	})();
-	endGame();
 }
 
 function endGame() {
@@ -59,8 +65,8 @@ function endGame() {
 	return;
 }
 
-async function setCurrentWord() {
-	resetWord = false;
+async function startCurrentRound() {
+	resetWord = false; //Sets to false in case player had used the randomButton in previous round
 	word = await fetchWord();
 	output.textContent = scrambleWord(word); //Displays scrambled word
 	const boxes = createInputBoxes(word.length);
@@ -73,9 +79,7 @@ async function gameLogic(word, boxes) {
 	let inputs = [];
 	shortcircuit = false;
 	do {
-		boxes.forEach((box) => {
-			box.textContent = "";
-		}); //Clear box content when trying again
+		boxes.forEach((box) => (box.textContent = "")); //Clear box content when trying again
 		inputs = []; //Clears inputs when trying again
 		currentTry.textContent = tries;
 
@@ -126,6 +130,7 @@ function createInputBoxes(length) {
 
 async function detectUserInput() {
 	return new Promise((resolve) => {
+		//Function won't exit until user has performed a valid input
 		document.onkeydown = (event) => {
 			if (/^[a-zA-Z]$/.test(event.key)) {
 				document.onkeydown = null; // Remove the event listener after the first valid key press
@@ -139,6 +144,7 @@ async function detectUserInput() {
 			resolve("reset");
 		};
 		if (randomsLeft > 0) {
+			//Random button is only enabled if player hasn't used all randomizers
 			randomButton.onclick = () => {
 				resolve("randomize");
 			};
