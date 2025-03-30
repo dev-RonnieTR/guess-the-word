@@ -59,7 +59,7 @@ function endGame() {
 	if (tries > 5) {
 		alert("You lose");
 	} else {
-		alert("You win!");
+		alert("🎉 Success!!!");
 	}
 	setTimeout(startGame, 1000); //Allows startGame() to fully finish before starting again, avoiding recursion
 	return;
