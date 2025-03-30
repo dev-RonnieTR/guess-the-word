@@ -40,7 +40,8 @@ body {
 		url("resources/bg-guess-the-word-small.jpg") 1x,
 		url("resources/bg-guess-the-word.jpg") 2x
 	);
-	background-repeat: repeat;
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 main {
