@@ -1,9 +1,10 @@
 const output = document.getElementById("output");
-const randomButton = document.getElementById("randomButton");
+const randomButton = document.getElementById("random-button");
 const resetButton = document.getElementById("reset-button");
 
 let tries;
 let resetGame = false; //Becomes true if user clicks resetButton
+let resetWord = false; //Becomes true if user clicks randomButton
 startGame();
 
 async function startGame() {
@@ -13,8 +14,11 @@ async function startGame() {
 		for (let i = 1; i <= 10; i++) {
 			await setCurrentWord();
 			if (tries > 5 || resetGame) {
-				break; 
-			//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
+				break;
+				//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
+			}
+			while (resetWord) {
+				await setCurrentWord();
 			}
 		}
 	})();
@@ -34,6 +38,7 @@ async function startGame() {
 }
 
 async function setCurrentWord() {
+	resetWord = false;
 	word = await fetchWord();
 	output.textContent = scrambleWord(word); //Displays scrambled word
 	const boxes = createInputBoxes(word.length);
@@ -46,6 +51,7 @@ async function gameLogic(word, boxes) {
 	let inputs = [];
 	currentTry = document.getElementById("current-try");
 
+	shortcircuit = false;
 	do {
 		boxes.forEach((box) => {
 			box.textContent = "";
@@ -66,19 +72,24 @@ async function gameLogic(word, boxes) {
 					}
 				} else if (userInput === "reset") {
 					resetGame = true;
+					shortcircuit = true;
 					return;
-					//Shortcircuits the parent function and the while loop
+				} else if (userInput === "randomize") {
+					resetWord = true;
+					shortcircuit = true;
+					return;
 				} else {
 					boxes[i].textContent = userInput;
 					inputs.push(userInput);
 				}
 			}
 		})();
-		if (!resetGame) {
+			if (shortcircuit) {
+				break;
+			}
 			retry = inputs.join("") !== word;
 			tries = retry ? tries + 1 : tries;
-		}
-	} while (inputs.join("") !== word && tries <= 5 && !resetGame);
+	} while (retry && tries <= 5);
 
 	return;
 }
@@ -105,6 +116,9 @@ async function detectUserInput() {
 		};
 		resetButton.onclick = () => {
 			resolve("reset");
+		};
+		randomButton.onclick = () => {
+			resolve("randomize");
 		};
 	});
 }
