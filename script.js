@@ -41,13 +41,22 @@ async function gameLogic(word, boxes) {
 		}); //Clear box content when trying again
 		inputs = []; //Clears inputs when trying again
 		currentTry.textContent = tries;
+
 		await (async () => {
-			for (const box of boxes) {
-				box.classList.add("input-box--active");
+			for (let i = 0; i < boxes.length; i++) {
+				boxes[i].classList.add("input-box--active");
 				const userInput = await detectUserInput();
-				box.textContent = userInput;
-				inputs.push(userInput);
-				box.classList.remove("input-box--active");
+				boxes[i].classList.remove("input-box--active");
+				if (userInput === "Backspace") {
+					i--; //Decreases one so next iteration of loop is the same index as the current
+					if (i >= 0) {
+						boxes[i].textContent = ""; //Deletes input of the previous iteration
+						i--; //Decrease once more so now the next iteration of loop will go one index backwards
+					}
+				} else {
+					boxes[i].textContent = userInput;
+					inputs.push(userInput);
+				}
 			}
 		})();
 		retry = inputs.join("") !== word;
@@ -72,6 +81,9 @@ async function detectUserInput() {
 			if (/^[a-zA-Z]$/.test(event.key)) {
 				document.onkeydown = null; // Remove the event listener after the first valid key press
 				resolve(event.key.toLowerCase()); // Resolve the promise with the key
+			} else if (event.key === "Backspace") {
+				document.onkeydown = null;
+				resolve(event.key);
 			}
 		};
 	});
@@ -105,7 +117,7 @@ async function fetchWord() {
 }
 
 async function getAllWords() {
-	const wordPromises = Array.from({ length: 10 }, () => fetchWord()); //Creates array of 10 elements, where each elements fetches a word
+	const wordPromises = Array.from({ length: 1 }, () => fetchWord()); //Creates array of 10 elements, where each elements fetches a word
 	const wordsFetched = await Promise.all(wordPromises); //Waits for all words to be fetched before continuing
 
 	return wordsFetched;
