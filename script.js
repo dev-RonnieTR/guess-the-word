@@ -1,42 +1,55 @@
 const output = document.getElementById("output");
 const randomButton = document.getElementById("random-button");
 const resetButton = document.getElementById("reset-button");
+const randomsLeftSpan = document.getElementById("randoms-left");
+const currentTry = document.getElementById("current-try");
 
 let tries;
-let resetGame = false; //Becomes true if user clicks resetButton
-let resetWord = false; //Becomes true if user clicks randomButton
+let resetGame; //Becomes true if user clicks resetButton
+let resetWord; //Becomes true if user clicks randomButton
 let randomsLeft = 3;
 
 startGame();
 
 async function startGame() {
 	resetGame = false;
-
+	resetWord = false;
 	tries = 1;
+	randomsLeft = 3;
+	randomsLeftSpan.textContent = randomsLeft;
+	randomButton.classList.add("button");
+	randomButton.classList.remove("button--disabled");
+	currentTry.textContent = tries;
 	await (async () => {
 		for (let i = 1; i <= 10; i++) {
-			await setCurrentWord();
-			if (tries > 5 || resetGame) {
-				break;
-				//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
-			}
-			while (resetWord) {
-				randomsLeft--;
-				document.getElementById('randoms-left').textContent = randomsLeft;
-				if (randomsLeft === 0) {
-					randomButton.classList.remove('button')
-					randomButton.classList.add('button--disabled')
-				}
+			do {
 				await setCurrentWord();
+				if (tries > 5 || resetGame) {
+					break;
+					//If all tries were used, or if resetGame was clicked, the loop stops and the game won't generate more words
+				}
+				if (resetWord) {
+					randomsLeft--;
+					randomsLeftSpan.textContent = randomsLeft;
+					if (randomsLeft === 0) {
+						randomButton.classList.remove("button");
+						randomButton.classList.add("button--disabled");
+					}
+				}
+			} while (resetWord);
+			if (resetGame) {
+				break;
 			}
 		}
 	})();
+	endGame();
+}
 
+function endGame() {
 	if (resetGame) {
 		setTimeout(startGame, 1000); //Allows current startGame() iteration to finish before running startGame() again
 		return;
 	}
-
 	if (tries > 5) {
 		alert("You lose");
 	} else {
@@ -58,8 +71,6 @@ async function setCurrentWord() {
 
 async function gameLogic(word, boxes) {
 	let inputs = [];
-	currentTry = document.getElementById("current-try");
-
 	shortcircuit = false;
 	do {
 		boxes.forEach((box) => {
@@ -74,7 +85,7 @@ async function gameLogic(word, boxes) {
 				const userInput = await detectUserInput();
 				boxes[i].classList.remove("input-box--active");
 				if (userInput === "Backspace") {
-					inputs.pop()
+					inputs.pop();
 					i--; //Decreases one so next iteration of loop is the same index as the current
 					if (i >= 0) {
 						boxes[i].textContent = ""; //Deletes input of the previous iteration
@@ -94,11 +105,11 @@ async function gameLogic(word, boxes) {
 				}
 			}
 		})();
-			if (shortcircuit) {
-				break;
-			}
-			retry = inputs.join("") !== word;
-			tries = retry ? tries + 1 : tries;
+		if (shortcircuit) {
+			break;
+		}
+		retry = inputs.join("") !== word;
+		tries = retry ? tries + 1 : tries;
 	} while (retry && tries <= 5);
 
 	return;
